@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../components/shoe_tile.dart';
+import '../models/shoe.dart';
+
 class shopPage extends StatefulWidget {
   const shopPage({super.key});
 
@@ -42,7 +45,7 @@ class _shopPageState extends State<shopPage> {
         //hot picks
 
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal:8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -56,11 +59,35 @@ class _shopPageState extends State<shopPage> {
               ),
               Text(
                 'See All',
-                style: TextStyle(fontWeight: FontWeight.bold,
-                                 color: Colors.blue),
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
               )
             ],
           ),
+        ),
+
+        const SizedBox(height: 10),
+
+        Expanded(
+          child: ListView.builder(
+            itemCount: 5,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              Shoe shoe = Shoe(
+                name: 'Air Jorden',
+                price: '240',
+                description: 'Cool Shoe',
+                imagePath: 'lib/images/shoe_1.png',
+              );
+              return ShoeTile(
+                shoe: shoe,
+              );
+            },
+          ),
+        ),
+
+        Divider(
+          color: Colors.white,
         )
       ],
     );
