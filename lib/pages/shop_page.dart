@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sneaker_shop/models/cart.dart';
 
 import '../components/shoe_tile.dart';
 import '../models/shoe.dart';
@@ -11,85 +13,104 @@ class shopPage extends StatefulWidget {
 }
 
 class _shopPageState extends State<shopPage> {
+  void addShoeToCart(Shoe shoe) {
+    Provider.of<Cart>(context, listen: false).addItemToCart(shoe);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Successfully added'),
+        content: Text('Check your cart'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          margin: const EdgeInsets.symmetric(horizontal: 25),
-          decoration: BoxDecoration(
-              color: Colors.grey[200], borderRadius: BorderRadius.circular(8)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text(
-                'Search',
-                style: TextStyle(color: Colors.grey),
-              ),
-              Icon(
-                Icons.search,
-                color: Colors.grey,
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 25.0),
-          child: Text(
-            'Everyone flies.. some fly longer than others',
-            style: TextStyle(color: Colors.grey[600]),
-          ),
-        ),
-
-        //hot picks
-
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: const [
-              Text(
-                'Hot picks 🔥',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
+    return Consumer<Cart>(
+      builder: (context, value, child) => Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.symmetric(horizontal: 25),
+            decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(8)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text(
+                  'Search',
+                  style: TextStyle(color: Colors.grey),
                 ),
-              ),
-              Text(
-                'See All',
-                style:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
-              )
-            ],
+                Icon(
+                  Icons.search,
+                  color: Colors.grey,
+                ),
+              ],
+            ),
           ),
-        ),
-
-        const SizedBox(height: 10),
-
-        Expanded(
-          child: ListView.builder(
-            itemCount: 5,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) {
-              Shoe shoe = Shoe(
-                name: 'Air Jorden',
-                price: '240',
-                description: 'Cool Shoe',
-                imagePath: 'lib/images/shoe_1.png',
-              );
-              return ShoeTile(
-                shoe: shoe,
-              );
-            },
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 25.0),
+            child: Text(
+              'Everyone flies.. some fly longer than others',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
           ),
-        ),
 
-        Divider(
-          color: Colors.white,
-        )
-      ],
+          //hot picks
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: const [
+                Text(
+                  'Hot picks 🔥',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                  ),
+                ),
+                Text(
+                  'See All',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                )
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          Expanded(
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                // Check if the index is within the range of the list
+                if (index >= value.getShoeList().length) {
+                  return null;
+                }
+                //get a shoe from shop list
+                Shoe shoe = value.getShoeList()[index];
+
+                // return the shoe
+                return ShoeTile(
+                  shoe: shoe,
+                  onTap: () => addShoeToCart(shoe),
+                );
+              },
+            ),
+          ),
+
+          Divider(
+            color: Colors.white,
+          )
+        ],
+      ),
     );
   }
 }
